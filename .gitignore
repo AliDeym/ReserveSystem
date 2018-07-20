@@ -1,6 +1,9 @@
 # VSCode Directory
 .vscode/
 
+# Generated setup file remove
+.core.php
+
 #Below is a list of Node gitignores from github's gitignore.
 
 # Logs
