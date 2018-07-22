@@ -20,7 +20,15 @@ abstract class Err {
 
     /* Fail when trying to make a file. */
     const FileCreationError = 6;
-    
+
+    /* Failed to authenticate using username and password. */
+    const AuthenticationFailure = 7;
+
+    /* Username already exists. */
+    const UserExists = 8;
+
+    /* Parameter or value exceed it's limit. */
+    const ExceedLimit = 9;
 
     /* Get error name of error constant. */
     public static function getName($errorType) 
@@ -53,12 +61,12 @@ class Response {
 
 
         // Return the failure data with error details.
-        echo json_encode(array(
+        die (json_encode (array (
             "data" => $error,
             "errorcode" => $errorType,
             "errortype" => $errName,
             "status" => false
-        ));
+        )));
 
         return 0;
     }

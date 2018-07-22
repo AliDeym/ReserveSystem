@@ -22,7 +22,7 @@ if (file_exists(".core.php")) {
 }
 
 // Get Request parameters.
-$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
+$request = explode('/', trim($_SERVER['PATH_INFO'], '/'));
 
 // Check wether the arguments are less than required or not.
 if (count($request) < 4) {
@@ -59,7 +59,11 @@ mysqli_set_charset($db, 'utf8');
 
 
 // Creation query.
-$creation_query = "CREATE TABLE IF NOT EXISTS `classes` (
+$creation_array = array();
+
+
+// Classes table.
+array_push($creation_array, "CREATE TABLE IF NOT EXISTS `classes` (
     id INT NOT NULL AUTO_INCREMENT,
     field_id INT NOT NULL,
     name VARCHAR (255) NOT NULL,
@@ -69,8 +73,11 @@ $creation_query = "CREATE TABLE IF NOT EXISTS `classes` (
     created_at DATETIME NOT NULL,
 
     PRIMARY KEY (id)
-);
-CREATE TABLE IF NOT EXISTS `users` (
+);");
+
+
+// Users table.
+array_push($creation_array, "CREATE TABLE IF NOT EXISTS `users` (
     code VARCHAR(32) NOT NULL,
     firstname VARCHAR(128) NOT NULL,
     lastname VARCHAR(128) NOT NULL,
@@ -83,8 +90,10 @@ CREATE TABLE IF NOT EXISTS `users` (
     administrator BIT DEFAULT 0,
 
     PRIMARY KEY (code)
-);
-CREATE TABLE IF NOT EXISTS `reserves` (
+);");
+
+// Reserves table.
+array_push($creation_array, "CREATE TABLE IF NOT EXISTS `reserves` (
     id INT NOT NULL AUTO_INCREMENT,
     user_code VARCHAR(32) NOT NULL,
     class_id INT NOT NULL,
@@ -94,32 +103,76 @@ CREATE TABLE IF NOT EXISTS `reserves` (
     accepted_at DATETIME NOT NULL,
 
     PRIMARY KEY (id)
-);
-CREATE TABLE IF NOT EXISTS `fields` (
+);");
+
+
+// Fields table.
+array_push($creation_array, "CREATE TABLE IF NOT EXISTS `fields` (
     id INT NOT NULL AUTO_INCREMENT,
     department_id INT NOT NULL,
     name VARCHAR (255) NOT NULL,
     PRIMARY KEY (id)
-);
-CREATE TABLE IF NOT EXISTS `departments` (
+);");
+
+
+// Departments table.
+array_push($creation_array, "CREATE TABLE IF NOT EXISTS `departments` (
     id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR (255) NOT NULL,
     PRIMARY KEY (id)
-);";
+);");
 
-// Create the required tables in database.
-mysqli_multi_query(
-    $db, 
-    $creation_query
-);
 
-// Check for SQL errors.
-if (mysqli_error($db)) {
-    return Response::Fail(
-        Err::QueryError,
-        "Creating MySQL Tables failed. check your PHP configuration. make sure you have MySqli libraries installed.\nMySQL error: " . mysqli_error($db)
-    );
+// Authentications table.
+array_push($creation_array, "CREATE TABLE IF NOT EXISTS `auths` (
+    code VARCHAR (32) NOT NULL,
+    auth VARCHAR (32) NOT NULL,
+    PRIMARY KEY (code)
+);");
+
+
+// Root user.
+array_push($creation_array, "INSERT INTO users 
+    (
+        code, 
+        firstname, 
+        lastname, 
+        password, 
+        birthdate, 
+        phonenumber, 
+        registered_at, 
+        edited_at, 
+        administrator
+    ) 
+    VALUES 
+    (
+        'root',
+        'administrator',
+        'owner',
+        '" . md5($pass) . "',
+        CURRENT_TIMESTAMP,
+        'root',
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP,
+        1
+    ) 
+ON DUPLICATE KEY UPDATE password = VALUES(password);
+");
+
+
+foreach ($creation_array as $k => $v) {
+    mysqli_query($db, $v);
+
+    // Check for SQL errors.
+    if (mysqli_error($db)) {
+        return Response::Fail(
+            Err::QueryError,
+            "Creating MySQL Tables failed. check your PHP configuration. make sure you have MySqli libraries installed.\nMySQL error: " . mysqli_error($db)
+        );
+    }
 }
+
+
 
 $f = fopen("./.core.php", "w");
 
@@ -140,46 +193,25 @@ fwrite($f, "
 /* Visit LICENSE file for more information.                      */
 /* ------------------------------------------------------------- */
 
+// Response file.
+require_once ('response.php');
+
 // Configurations.
 \$RS_HOSTNAME = '$host';
 \$RS_USERNAME = '$user';
 \$RS_PASSWORD = '$pass';
 \$RS_DATABASE = '$dbse';
 
-\$db = mysqli_connect(\$RS_HOSTNAME, \$RS_USERNAME, \$RS_PASSWORD, \$RS_DATABASE);
+\$db = mysqli_connect (\$RS_HOSTNAME, \$RS_USERNAME, \$RS_PASSWORD, \$RS_DATABASE);
 
-// List of executes.
-\$RS_EXECS = array();
-
-
-
-// Execute a query, and store it for free-ing the results.
-function rs_exec(\$data)
-{
-    \$qry = mysqli_query(\$db, \$data);
-
-    array_push(\$RS_EXECS, \$qry);
-
-    return \$qry;
-}
-
-// Shortcut for mysqli_fetch_assoc.
-function rs_assoc(\$qry)
-{
-    return mysqli_fetch_assoc(\$qry);
-}
-
-// Free all remaining results from mysqli and also closes the sql connection.
-function rs_quit()
-{
-    foreach (\$RS_EXECS as \$val) {
-        mysqli_free_result(\$val);
-    }
-
-    mysqli_close(\$db);
+if (!\$db) {
+    return Response::Fail (
+        Err::EstablishConnection,
+        'MySQL Connection Error: ' . mysqli_connect_error ()
+    );
 }
 ");
 
 fclose($f);
 
-return Response::Success("Install success.");
+return Response::Success("Install success. Refresh the page, use username root and password same as your database.");
