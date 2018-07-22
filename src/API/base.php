@@ -22,6 +22,16 @@ $request = explode('/', trim($_SERVER['PATH_INFO'], '/'));
 // List of executes.
 $RS_EXECS = array();
 
+/* Minimum number of arguments for the current API method. */
+function rs_minargs($num)
+{
+    global $request;
+
+    if (count($request) < $num)
+        return Response::Fail(Err::InvalidArgumentsCount, "Invalid arguments count.");
+}
+
+/* Gets comparison method from shortcut strings. */
 function _rs_get_shortcut($shortcut = "eq")
 {
     switch (strtolower($shortcut)) {
@@ -78,7 +88,7 @@ function _rs_get_shortcut($shortcut = "eq")
 }
 
 
-// Execute a query, and store it for free-ing the results.
+/* Execute a query, and store it for free-ing the results.*/
 function rs_exec($data, $errorSafe = false)
 {
     // Get the database MySqli object from globals.
@@ -103,7 +113,7 @@ function rs_exec($data, $errorSafe = false)
     return $qry;
 }
 
-// All in one function to run queries easier.
+/* All in one function to run queries easier. */
 function rs_get_raw($table, $field, $value, $comparison = "eq", $fields = "*", $limit = 0, $offset = 0)
 {
     $comparison_raw = _rs_get_shortcut($comparison);
@@ -117,25 +127,25 @@ function rs_get_raw($table, $field, $value, $comparison = "eq", $fields = "*", $
     );
 }
 
-// Same as get raw, but only returns one value, and returns the assoc array. easy to use ;).
+/* Same as get raw, but only returns one value, and returns the assoc array. easy to use ;). */
 function rs_get($table, $field, $value, $comparison = "eq", $fields = "*")
 {
     return rs_assoc(rs_get_raw($table, $field, $value, $comparison, $fields, 1));
 }
 
-// Shortcut for mysqli_fetch_assoc.
+/* Shortcut for mysqli_fetch_assoc. */
 function rs_assoc($qry)
 {
     return mysqli_fetch_assoc($qry);
 }
 
-// Shortcut for mysqli_fetch_array.
+/* Shortcut for mysqli_fetch_array. */
 function rs_array($qry)
 {
     return mysqli_fetch_array($qry);
 }
 
-// Free all remaining results from mysqli and also closes the sql connection.
+/* Free all remaining results from mysqli and also closes the sql connection. */
 function rs_quit()
 {
     // Get MySqli object from globals.
