@@ -1,4 +1,3 @@
-import React from 'react';
 import axios from 'axios';
 
 class Network {
@@ -13,9 +12,9 @@ class Network {
 
         // Concat every parameter in array to one single string.
         if (params != null) {
-            await params.map(arg => {
-                rawParams = rawParams + arg + "/";
-            });
+            await params.map(arg =>
+                rawParams = rawParams + arg + "/"
+            );
         }
 
         await axios.get(this.apiURL + method + ".php/" + rawParams).then(res => {

@@ -23,12 +23,35 @@ $request = explode('/', trim($_SERVER['PATH_INFO'], '/'));
 $RS_EXECS = array();
 
 /* Minimum number of arguments for the current API method. */
+/* NOTE: This method also checks for SQL Injections and clears them. */
 function rs_minargs($num)
 {
     global $request;
+    global $db;
+
+
 
     if (count($request) < $num)
         return Response::Fail(Err::InvalidArgumentsCount, "Invalid arguments count.");
+
+    
+    foreach ($request as $k => $v) {
+        $request[$k] = mysqli_real_escape_string($db, $v);
+    }
+}
+
+/* This function forces the API method to use authentication. */
+function rs_auth($user, $auth_code)
+{
+    $user_auth = rs_get("auths", "code", $user);
+
+    if (!$user_auth) {
+        return Response::Fail(Err::AuthenticationFailure, "Method requires authentication.");
+    }
+
+    if ($auth_code != $auth_code) {
+        return Response::Fail(Err::AuthenticationFailure, "Method requires authentication.");
+    }
 }
 
 /* Gets comparison method from shortcut strings. */
@@ -56,6 +79,8 @@ function _rs_get_shortcut($shortcut = "eq")
         case "<":
             return "<";
 
+
+        case "gt":
         case "bt":
         case "mt":
         case ">":
@@ -70,12 +95,16 @@ function _rs_get_shortcut($shortcut = "eq")
             return "<=";
 
 
+        case "gtoreq":
         case "btoreq":
         case "mtoreq":
+        case "gtoe":
         case "btoe":
         case "mtoe":
+        case "gte":
         case "bte":
         case "mte":
+        case "ge":
         case "be":
         case "me":
         case ">=":

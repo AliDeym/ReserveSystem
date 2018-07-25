@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 
-import { Button, Form, FormGroup, Label, Input, Fade, Alert } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, Fade } from 'reactstrap';
 
 import Network from './Network';
 
