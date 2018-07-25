@@ -29,12 +29,11 @@ function rs_minargs($num)
     global $request;
     global $db;
 
-
-
     if (count($request) < $num)
         return Response::Fail(Err::InvalidArgumentsCount, "Invalid arguments count.");
 
     
+    // Prevent SQL Injections.
     foreach ($request as $k => $v) {
         $request[$k] = mysqli_real_escape_string($db, $v);
     }
