@@ -66,11 +66,11 @@ class SetupForm extends React.Component {
 
 
         // Set a datetime for detecting how long process took, so we can hide the Loading... text.
-        let timePassed = Date.now ();
-        
+        let timePassed = Date.now();
+
         // Call the API, and get the JSON result.
         let json = await Network.call("setup", params);
-        
+
         // In case the setup fails, take back the form visibility.
         if (!json.status) {
             this.setState({
@@ -80,10 +80,10 @@ class SetupForm extends React.Component {
 
 
         // After all the API process, let's get time now.
-        let timeNow = Date.now ();
+        let timeNow = Date.now();
 
         // Difference between times.
-        let diff = math.abs(timePassed- timeNow);
+        let diff = math.abs(timePassed - timeNow);
 
         // More than 5 seconds passed, so we no longer need the loading.
         if (diff > 5000) {
@@ -106,29 +106,29 @@ class SetupForm extends React.Component {
         return (
             <div id="extcontent">
                 <Fade in={!this.state.fadeForm}>
-                <Form>
-                    <FormGroup>
-                        <Label for="host">Database Host</Label>
-                        <Input type="text" name="host" id="host" placeholder="Host" onChange={this.handleInput} />
-                    </FormGroup>
+                    <Form>
+                        <FormGroup>
+                            <Label for="host">Database Host</Label>
+                            <Input type="text" name="host" id="host" placeholder="Host" onChange={this.handleInput} />
+                        </FormGroup>
 
-                    <FormGroup>
-                        <Label for="user">Database Username</Label>
-                        <Input type="text" name="user" id="user" placeholder="Username" onChange={this.handleInput} />
-                    </FormGroup>
+                        <FormGroup>
+                            <Label for="user">Database Username</Label>
+                            <Input type="text" name="user" id="user" placeholder="Username" onChange={this.handleInput} />
+                        </FormGroup>
 
-                    <FormGroup>
-                        <Label for="pass">Database Password</Label>
-                        <Input type="password" name="pass" id="pass" placeholder="Password" onChange={this.handleInput} />
-                    </FormGroup>
+                        <FormGroup>
+                            <Label for="pass">Database Password</Label>
+                            <Input type="password" name="pass" id="pass" placeholder="Password" onChange={this.handleInput} />
+                        </FormGroup>
 
-                    <FormGroup>
-                        <Label for="pass">Database Name</Label>
-                        <Input type="text" name="database" id="database" placeholder="Database" onChange={this.handleInput} />
-                    </FormGroup>
+                        <FormGroup>
+                            <Label for="pass">Database Name</Label>
+                            <Input type="text" name="database" id="database" placeholder="Database" onChange={this.handleInput} />
+                        </FormGroup>
 
-                    <Button onClick={this.setup} color="success">Setup</Button>
-                </Form>
+                        <Button onClick={this.setup} color="success">Setup</Button>
+                    </Form>
                 </Fade>
             </div>
         );

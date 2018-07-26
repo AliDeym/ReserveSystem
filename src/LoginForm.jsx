@@ -19,11 +19,13 @@ class LoginForm extends React.Component {
         };
 
         this.timer = 0;
+        this.loginTimer = 0;
 
         // Register methods.
         this.login = this.login.bind(this);
         this.handleInput = this.handleInput.bind(this);
         this.finishLoading = this.finishLoading.bind(this);
+        this.loginSuccessHandler = this.loginSuccessHandler.bind(this);
     }
 
 
@@ -39,6 +41,13 @@ class LoginForm extends React.Component {
         this.setState({
             [e.target.name]: e.target.value
         });
+    }
+
+    
+    /* Called in case of login success. */
+    loginSuccessHandler() {
+        // TODO: Change context to 
+        //this.props.context("")
     }
 
 
@@ -72,6 +81,9 @@ class LoginForm extends React.Component {
             this.setState({
                 fadeForm: false
             });
+        } else {
+            // Set the auth and administrator.
+            this.props.login(json.data);
         }
 
 
@@ -83,8 +95,7 @@ class LoginForm extends React.Component {
 
         // More than 5 seconds passed, so we no longer need the loading.
         if (diff > 5000) {
-            // The second argument is for disabling the display of loading.
-            this.props.loader("Reserve system has been setted up.", false);
+            this.finishLoading ();
         }
 
         // For less than 5 seconds pass, we need to put our difference seconds into a timer.
@@ -93,7 +104,12 @@ class LoginForm extends React.Component {
 
 
         // Send a notification to the main app.
-        this.props.notify(json.data, json.status);
+        this.props.notify(json.status ? "Login successful." : json.data, json.status);
+
+        if (json.status) {
+            // Move to the user panel, or admin panel 3 seconds after success.
+            this.loginTimer = setTimeout(this.loginSuccessHandler, 3000);
+        }
     }
 
 
@@ -121,7 +137,7 @@ class LoginForm extends React.Component {
                                         <Button onClick={this.login} color="success">Login</Button>
                                     </Col>
                                     <Col xs="6">
-                                        <Button onClick={(e) => this.props.context("SetupForm") } color="info">Register</Button>
+                                        <Button onClick={(e) => this.props.context("RegisterForm") } color="info">Register</Button>
                                     </Col>
                                 </Row>
                             </Container>

@@ -30,6 +30,10 @@ abstract class Err {
     /* Parameter or value exceed it's limit. */
     const ExceedLimit = 9;
 
+    /* Admin only method, users not allowed. */
+    const InvalidUserGroup  = 10;
+
+    
     /* Get error name of error constant. */
     public static function getName($errorType) 
     {

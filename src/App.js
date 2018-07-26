@@ -4,6 +4,7 @@ import logo from './logo.svg';
 
 import SetupForm from './SetupForm.jsx';
 import LoginForm from './LoginForm.jsx';
+import RegisterForm from './RegisterForm.jsx';
 
 import Notifications from './Notifications';
 import LoadingText from './LoadingText';
@@ -24,18 +25,32 @@ class App extends Component {
       mainContent: "",
       loadingText: "Loading",
       fadeForm: true,
-      loadingFaded: true
+      loadingFaded: true,
+      notifyCollapse: false,
+      loginData: {
+        auth: "",
+        administrator: false
+      }
     }
 
     this.notifyHandler = this.notifyHandler.bind(this);
     this.loadingHandler = this.loadingHandler.bind(this);
+    this.loginDataHandler = this.loginDataHandler.bind(this);
     this.contentChangeHandler = this.contentChangeHandler.bind(this);
   }
 
-  /* Handle notifications insertion. */
-  notifyHandler(message = "Error", success = false) {
+  /* Handle login data. */
+  loginDataHandler(data) {
     this.setState({
-      alertComponent: <Notifications color={success ? "success" : "danger"} message={message} />
+      loginData: data
+    });
+  }
+
+  /* Handle notifications insertion. */
+  notifyHandler(message = "Error", success = false, shouldCollapse = false) {
+    this.setState({
+      alertComponent: <Notifications color={success ? "success" : "danger"} message={message} />,
+      notifyCollapse: shouldCollapse
     });
   }
 
@@ -51,7 +66,8 @@ class App extends Component {
     // Create a list of components that we want to use.
     let components = {
       SetupForm: SetupForm,
-      LoginForm: LoginForm
+      LoginForm: LoginForm,
+      RegisterForm: RegisterForm
     }
 
     // Get the component dynamically with the string variable from the components list.
@@ -59,7 +75,7 @@ class App extends Component {
 
     // Draw the requested component.
     this.setState({
-      mainContent: <DynamicComponent notify={this.notifyHandler} loader={this.loadingHandler} context={this.contentChangeHandler} />
+      mainContent: <DynamicComponent auth={this.state.loginData.auth} administrator={this.state.administrator} login={this.loginDataHandler} notify={this.notifyHandler} loader={this.loadingHandler} context={this.contentChangeHandler} />
     });
   }
 
@@ -90,7 +106,9 @@ class App extends Component {
         <div className="App-Content">
           <div className="mcontents">
             <div>
-              {this.state.alertComponent}
+              <Collapse isOpen={!this.state.notifyCollapse}>
+                {this.state.alertComponent}
+              </Collapse>
             </div>
 
             <Collapse isOpen={!this.state.loadingFaded}>

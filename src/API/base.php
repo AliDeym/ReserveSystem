@@ -40,16 +40,24 @@ function rs_minargs($num)
 }
 
 /* This function forces the API method to use authentication. */
-function rs_auth($user, $auth_code)
+function rs_auth($user, $auth_code, $admin_method = false)
 {
-    $user_auth = rs_get("auths", "code", $user);
+    $auth_object = rs_get("auths", "code", $user);
 
-    if (!$user_auth) {
+    if (!$auth_object) {
         return Response::Fail(Err::AuthenticationFailure, "Method requires authentication.");
     }
 
-    if ($auth_code != $auth_code) {
+    if ($auth_object["auth"] != $auth_code) {
         return Response::Fail(Err::AuthenticationFailure, "Method requires authentication.");
+    }
+
+    if ($admin_method) {
+        $user_object = rs_get("users", "code", $user);
+
+        if ($user_object["administrator"] <= 0) {
+            return Response::Fail(Err::InvalidUserGroup, "Method requires special user group.");
+        }
     }
 }
 
@@ -60,6 +68,7 @@ function _rs_get_shortcut($shortcut = "eq")
         case "eq":
         case "=":
         case "==":
+        case "===":
             return "=";
 
 
@@ -70,6 +79,7 @@ function _rs_get_shortcut($shortcut = "eq")
         case "no":
         case "!":
         case "!=":
+        case "!==":
         case "<>":
             return "<>";
 
@@ -91,6 +101,7 @@ function _rs_get_shortcut($shortcut = "eq")
         case "lte":
         case "le":
         case "<=":
+        case "<==":
             return "<=";
 
 
@@ -107,6 +118,7 @@ function _rs_get_shortcut($shortcut = "eq")
         case "be":
         case "me":
         case ">=":
+        case ">==":
             return ">=";
 
 
