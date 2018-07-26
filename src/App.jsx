@@ -1,15 +1,23 @@
 import React, { Component } from 'react';
+import { Collapse } from 'reactstrap';
+
+
 import './App.css';
 import logo from './logo.svg';
+
+
 
 import SetupForm from './SetupForm.jsx';
 import LoginForm from './LoginForm.jsx';
 import RegisterForm from './RegisterForm.jsx';
 
+import Toolbar from './Toolbar.jsx';
+
 import Notifications from './Notifications';
 import LoadingText from './LoadingText';
 
-import { Collapse } from 'reactstrap';
+
+
 
 import Network from './Network';
 
@@ -93,6 +101,14 @@ class App extends Component {
   }
 
   render() {
+    let authCode = this.state.loginData.auth;
+    let admin = this.state.loginData.administrator;
+
+    let isAuthed = authCode !== "";
+
+    let toolBar = isAuthed ? <Toolbar /> : "";
+
+
     return (
       <div className="App">
         <header className="App-header">
@@ -104,6 +120,10 @@ class App extends Component {
 
 
         <div className="App-Content">
+          <div className="tools">
+            {toolBar}
+          </div>
+
           <div className="mcontents">
             <div>
               <Collapse isOpen={!this.state.notifyCollapse}>
