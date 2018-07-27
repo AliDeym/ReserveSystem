@@ -159,12 +159,35 @@ function rs_get_raw($table, $field, $value, $comparison = "eq", $fields = "*", $
     $comparison_raw = _rs_get_shortcut($comparison);
 
     return rs_exec(
-        "SELECT $fields FROM $table WHERE $field $comparison_raw "
-        . (gettype($value) == "integer" ? $value : "'$value'")
-        . ($limit <= 0 ? "" : " LIMIT $limit")
-        . ($offset <= 0 ? "" : " OFFSET $offset")
-        . ";"
+        "SELECT $fields FROM $table " . ($comparison !== "nil" ? ("WHERE $field $comparison_raw "
+            . (gettype($value) == "integer" ? $value : "'$value'")
+            . ($limit <= 0 ? "" : " LIMIT $limit")
+            . ($offset <= 0 ? "" : " OFFSET $offset")
+            . ";") : ";")
     );
+}
+
+/* Gets all rows from query. */
+function rs_get_all($table, $field = "nil", $value = "nil", $comparison = "nil", $fields = "*", $limit = 0, $offset = 0)
+{
+    // Create a query from parameters.
+    $query = rs_get_raw($table, $field, $value, $comparison, $fields, $limit, $offset);
+
+    // In case of fail queries:
+    if (!$query) {
+        return Response::Fail(
+            Err::QueryError,
+            "Response is empty."
+        );
+    }
+
+    $data = array();
+
+    while ($row = rs_assoc($query)) {
+        array_push($data, $row);
+    }
+
+    return $data;
 }
 
 /* Same as get raw, but only returns one value, and returns the assoc array. easy to use ;). */

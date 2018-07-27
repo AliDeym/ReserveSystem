@@ -1,4 +1,6 @@
 <?php
+require_once("base.php");
+
 abstract class Err {
     /* Invalid parameters count. */
     const InvalidArgumentsCount = 0;
@@ -63,6 +65,8 @@ class Response {
         // Generate name from error const integer value.
         $errName = Err::getName($errorType);
 
+        // Empty all results before dying.
+        rs_quit();
 
         // Return the failure data with error details.
         die (json_encode (array (
@@ -78,6 +82,9 @@ class Response {
     /* Success response, with data inside. */
     public static function Success($data) 
     {
+        // Clear the results from RAM.
+        rs_quit();
+
         echo json_encode (array(
             "data" => $data,
             "status" => true
