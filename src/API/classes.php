@@ -34,7 +34,10 @@ try {
 
     }
 } catch (Exception $ex) {
-    return Response::Fail(Err::InvalidArgumentsType, "Department ID must be a number.");
+    return Response::Fail(
+        Err::InvalidArgumentsType, 
+        "Department ID must be a number."
+    );
 }
 
 return Response::Success($classes);

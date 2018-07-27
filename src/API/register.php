@@ -16,21 +16,30 @@ rs_minargs(7);
 // Failure response shortcut.
 function auth_fail()
 {
-    return Response::Fail(Err::AuthenticationFailure, "Username exists. Please log-in.");
+    return Response::Fail(
+        Err::AuthenticationFailure, 
+        "Username exists. Please log-in."
+    );
 }
 
 function type_fail($type)
 {
     $type = ucwords($type);
 
-    return Response::Fail(Err::InvalidArgumentsType, "Invalid arguments type '$type'.");
+    return Response::Fail(
+        Err::InvalidArgumentsType, 
+        "Invalid arguments type '$type'."
+    );
 }
 
 function limit_fail ($type)
 {
     $type = ucwords($type);
 
-    return Response::Fail(Err::ExceedLimit, "Exceed the limit for type '$type'.");
+    return Response::Fail(
+        Err::ExceedLimit, 
+        "Exceed the limit for type '$type'."
+    );
 }
 
 
@@ -73,7 +82,10 @@ if (!is_numeric($birthdate) || !date('Y-m-d', $birthdate))
 
 // Passed the limit:
 if ($converted_birth > $date_highlimit || $converted_birth < $date_lowlimit)
-    return Response::Fail(Err::ExceedLimit, "Invalid Age.");
+    return Response::Fail(
+        Err::ExceedLimit, 
+        "Invalid Age."
+    );
 
 if (strlen($code) > 32)
     return limit_fail("user code");

@@ -19,4 +19,7 @@ if (file_exists(".core.php")) {
     );
 }
 
-return Response::Fail(Err::InvalidSetup, "ReserveSystem is not setted up yet.");
+return Response::Fail(
+    Err::InvalidSetup, 
+    "ReserveSystem is not setted up yet."
+);

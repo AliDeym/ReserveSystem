@@ -46,4 +46,9 @@ rs_exec("INSERT INTO auths (code, auth) VALUES ('$code', '$gen_code') ON DUPLICA
 $user_isadmin = $user["administrator"] > 0;
 
 
-return Response::Success(array("auth" => $gen_code, "administrator" => $user_isadmin));
+return Response::Success(
+    array(
+        "auth" => $gen_code, 
+        "administrator" => $user_isadmin
+    )
+);

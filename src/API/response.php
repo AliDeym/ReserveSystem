@@ -1,7 +1,8 @@
 <?php
 require_once("base.php");
 
-abstract class Err {
+abstract class Err
+{
     /* Invalid parameters count. */
     const InvalidArgumentsCount = 0;
     
@@ -33,14 +34,14 @@ abstract class Err {
     const ExceedLimit = 9;
 
     /* Admin only method, users not allowed. */
-    const InvalidUserGroup  = 10;
+    const InvalidUserGroup = 10;
 
     
     /* Get error name of error constant. */
-    public static function getName($errorType) 
+    public static function getName($errorType)
     {
         // Get reflection of this class and also it's constants as an array.
-        $errClass = new ReflectionClass(__CLASS__);
+        $errClass = new ReflectionClass(__class__);
         $consts = $errClass->getConstants();
 
         // Create a temporarly variable for const name for later use.
@@ -58,9 +59,10 @@ abstract class Err {
     }
 }
 
-class Response {
+class Response
+{
     /* Failure repsonse with error details. */
-    public static function Fail($errorType, $error) 
+    public static function Fail($errorType, $error)
     {
         // Generate name from error const integer value.
         $errName = Err::getName($errorType);
@@ -69,26 +71,30 @@ class Response {
         rs_quit();
 
         // Return the failure data with error details.
-        die (json_encode (array (
-            "data" => $error,
-            "errorcode" => $errorType,
-            "errortype" => $errName,
-            "status" => false
-        )));
+        die(json_encode(
+            array(
+                "data" => $error,
+                "errorcode" => $errorType,
+                "errortype" => $errName,
+                "status" => false
+            )
+        ));
 
         return 0;
     }
 
     /* Success response, with data inside. */
-    public static function Success($data) 
+    public static function Success($data)
     {
         // Clear the results from RAM.
         rs_quit();
 
-        echo json_encode (array(
-            "data" => $data,
-            "status" => true
-        ));
+        echo json_encode(
+            array(
+                "data" => $data,
+                "status" => true
+            )
+        );
 
         return 1;
     }

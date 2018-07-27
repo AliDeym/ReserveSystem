@@ -30,7 +30,10 @@ function rs_minargs($num)
     global $db;
 
     if (count($request) < $num)
-        return Response::Fail(Err::InvalidArgumentsCount, "Invalid arguments count.");
+        return Response::Fail(
+            Err::InvalidArgumentsCount, 
+            "Invalid arguments count."
+        );
 
     
     // Prevent SQL Injections.
@@ -45,18 +48,27 @@ function rs_auth($user, $auth_code, $admin_method = false)
     $auth_object = rs_get("auths", "code", $user);
 
     if (!$auth_object) {
-        return Response::Fail(Err::AuthenticationFailure, "Method requires authentication.");
+        return Response::Fail(
+            Err::AuthenticationFailure, 
+            "Method requires authentication."
+        );
     }
 
     if ($auth_object["auth"] != $auth_code) {
-        return Response::Fail(Err::AuthenticationFailure, "Method requires authentication.");
+        return Response::Fail(
+            Err::AuthenticationFailure, 
+            "Method requires authentication."
+        );
     }
 
     if ($admin_method) {
         $user_object = rs_get("users", "code", $user);
 
         if ($user_object["administrator"] <= 0) {
-            return Response::Fail(Err::InvalidUserGroup, "Method requires special user group.");
+            return Response::Fail(
+                Err::InvalidUserGroup, 
+                "Method requires special user group."
+            );
         }
     }
 }

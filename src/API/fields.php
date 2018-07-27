@@ -24,7 +24,10 @@ $fields = null;
 try {
     $fields = rs_get_all("fields", "department_id", intval($department), "eq");
 } catch (Exception $ex) {
-    return Response::Fail(Err::InvalidArgumentsType, "Department ID must be a number.");
+    return Response::Fail(
+        Err::InvalidArgumentsType, 
+        "Department ID must be a number."
+    );
 }
 
 return Response::Success($fields);

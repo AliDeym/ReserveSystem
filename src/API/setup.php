@@ -214,4 +214,6 @@ if (!\$db) {
 
 fclose($f);
 
-return Response::Success("Install success. Refresh the page, use username root and password same as your database.");
+return Response::Success(
+    "Install success. Refresh the page, use username root and password same as your database."
+);
